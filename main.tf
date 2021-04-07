@@ -1,114 +1,27 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 2.52.0"
-    }
+resource "azurerm_app_service_plan" "CIO-VCBOARDROOM-asp" {
+  name                = "${local.environment}-cio-vcboardroom-asp"
+  location            = local.resource_groups_L3.AppServices.location
+  resource_group_name = local.resource_groups_L3.AppServices.name
+
+  sku {
+    tier = "PremiumV2"
+    size = "P1v2"
   }
 }
 
-locals {
-    deploydbs = {
-    for x in var.server.SQL_Database : 
-      "${x.sqldbname}" => x if lookup(x, "deploy", true) != false
-  }
-}
-
-
-resource "azurerm_mssql_server" "mssql" {     
-    name                          = "${var.environment}-cio-${var.server["sqlname"]}"
-    location                      = var.location
-    resource_group_name           = var.server["resource_group_name"]
-    version                       = var.server["mssql_version"]
-    administrator_login           = var.server["administrator_login"]
-    administrator_login_password  = var.server["administrator_login_password"]       
-    public_network_access_enabled = false
-     
-    azuread_administrator {
-      login_username      = var.server["login_username"]
-      tenant_id           = var.active_directory_administrator_tenant_id
-      object_id           = var.active_directory_administrator_object_id
-    }   
+resource  "azurerm_app_service" "CIO-VCBOARDROOM-aps" {
+  name                = "${local.environment}ciovcboardroom"
+  location            = local.resource_groups_L3.AppServices.location
+  resource_group_name = local.resource_groups_L3.AppServices.name
+  app_service_plan_id = azurerm_app_service_plan.CIO-VCBOARDROOM-asp.id
   
-}
-
-resource "azurerm_mssql_database" "mssql" {    
-  for_each = local.deploydbs
-    name           = "${var.environment}-cio-${each.value.sqldbname}"
-    server_id      = azurerm_mssql_server.mssql.id
-    collation      = each.value.collation
-    license_type   = each.value.license_type
-    max_size_gb    = each.value.max_size_gb
-    read_scale     = each.value.read_scale
-    sku_name       = each.value.sku_name
-    zone_redundant = each.value.zone_redundant
-
-    dynamic "short_term_retention_policy" {
-       for_each =  each.value.policyretention_days == null ? [] : [ each.value.policyretention_days]
-      content {
-        retention_days =  each.value.policyretention_days
-      }     
-    }
-    
-    dynamic "long_term_retention_policy" {
-      for_each = each.value.week_of_year == null ? [] : [each.value.week_of_year]
-      content {
-        weekly_retention = each.value.weekly_retention
-        monthly_retention = each.value.monthly_retention
-        yearly_retention = each.value.yearly_retention
-        week_of_year =  each.value.week_of_year
-      }
-    }
-}
-
-resource   "azurerm_mssql_server_extended_auditing_policy" "mssql" { 
-  server_id                               = azurerm_mssql_server.mssql.id
-  storage_endpoint                        = azurerm_storage_account.mssql.primary_blob_endpoint
-  storage_account_access_key              = azurerm_storage_account.mssql.primary_access_key
-  storage_account_access_key_is_secondary = false
-  retention_in_days                       = 6
-} 
-
-resource "azurerm_mssql_server_security_alert_policy" "mssql" {  
-  resource_group_name        =  var.server["resource_group_name"]
-  server_name                =  azurerm_mssql_server.mssql.name
-  state                      = "Enabled"
-  storage_endpoint           = azurerm_storage_account.mssql.primary_blob_endpoint
-  storage_account_access_key = azurerm_storage_account.mssql.primary_access_key
-  email_account_admins       = true
-  disabled_alerts = [    
-    "Data_Exfiltration"
-  ]
-  retention_days = 30
-}
-
-# resource "azurerm_sql_active_directory_administrator" "mssql" {  
-#   server_name         = azurerm_mssql_server.mssql.name
-#   resource_group_name = var.resource_group_name
-#   login               = "louis-eric.tremblay@ssc-spc.gc.ca"
-#   tenant_id           = var.active_directory_administrator_tenant_id
-#   object_id           = var.active_directory_administrator_object_id
-# }
-
-resource "azurerm_private_endpoint" "mssql" { 
-  name                = "${var.environment}-cio-${var.server["sqlname"]}-pe"
-  location            = var.location
-  resource_group_name = var.server["resource_group_name"] //"ScDc-CIO_APS_Network-rg"
-  subnet_id           = var.subnet_id
-
-  private_dns_zone_group {
-    name = "${var.server["sqlname"]}privatednszonegroup"
-    private_dns_zone_ids = [var.DnsPrivatezoneId]
-  }
-
-  private_service_connection {   
-    name                           = "${var.environment}-cio-${var.server["sqlname"]}-psc"
-    private_connection_resource_id =  azurerm_mssql_server.mssql.id
-    subresource_names              = ["sqlServer"]
-    is_manual_connection           = false
+  app_settings = {
+    "WEBSITE_DNS_SERVER" = "168.63.129.16",
+    "WEBSITE_VNET_ROUTE_ALL" = "1"
   }
 }
 
-# output "private_link_endpoint_ip03" {
-#   value = "${azurerm_private_endpoint.CIO-vcboardroom-pe.private_service_connection.0.private_ip_address}"
-#}
+resource "azurerm_app_service_virtual_network_swift_connection" "vnetintegrationconnection" {
+  app_service_id  = azurerm_app_service.CIO-VCBOARDROOM-aps.id
+  subnet_id       = local.subnets.APP.id
+}
