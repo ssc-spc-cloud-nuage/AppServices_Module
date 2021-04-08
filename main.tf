@@ -26,7 +26,7 @@ resource "azurerm_app_service_plan" "appservices-asp" {
 }
 
 resource  "azurerm_app_service" "appservices-aps" {
-  for_each = local.deploydbs
+  for_each = local.deployappservices
   name                = "${var.environment}-cio-${each.value.name}"
   location            = var.location
   resource_group_name = each.value.resource_group_name
