@@ -32,13 +32,21 @@ resource  "azurerm_app_service" "appservices-aps" {
   resource_group_name = each.value.resource_group_name
   app_service_plan_id = azurerm_app_service_plan.appservices-asp.id
   
-  dynamic "app_settings" {
-     for_each =  each.value.WEBSITE_DNS_SERVER == null ? [] : [each.value.WEBSITE_DNS_SERVER]
-      content {
-        WEBSITE_DNS_SERVER = each.value.WEBSITE_DNS_SERVER # "168.63.129.16",
-        WEBSITE_VNET_ROUTE_ALL = each.value.WEBSITE_VNET_ROUTE_ALL # "1"
-      }         
+  site_config {
+    for_each =  each.value.dotnet_framework_version == null ? [] : [each.value.dotnet_framework_version]
+     content {
+      dotnet_framework_version = "v4.0"
+      scm_type                 = "LocalGit"
+     }
   }
+
+  # dynamic "app_settings" {
+  #    for_each =  each.value.WEBSITE_DNS_SERVER == null ? [] : [each.value.WEBSITE_DNS_SERVER]
+  #     content {
+  #       WEBSITE_DNS_SERVER = each.value.WEBSITE_DNS_SERVER # "168.63.129.16",
+  #       WEBSITE_VNET_ROUTE_ALL = each.value.WEBSITE_VNET_ROUTE_ALL # "1"
+  #     }         
+  # }
 }
 
 resource "azurerm_app_service_virtual_network_swift_connection" "vnetintegrationconnection" {
