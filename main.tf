@@ -40,13 +40,13 @@ resource  "azurerm_app_service" "appservices-aps" {
      }
   }
 
-  # dynamic "app_settings" {
-  #    for_each =  each.value.WEBSITE_DNS_SERVER == null ? [] : [each.value.WEBSITE_DNS_SERVER]
-  #     content {
-  #       WEBSITE_DNS_SERVER = each.value.WEBSITE_DNS_SERVER # "168.63.129.16",
-  #       WEBSITE_VNET_ROUTE_ALL = each.value.WEBSITE_VNET_ROUTE_ALL # "1"
-  #     }         
-  # }
+  dynamic "app_settings" {
+     for_each =  each.value.WEBSITE_DNS_SERVER == null ? [] : [each.value.WEBSITE_DNS_SERVER]
+      content {
+        WEBSITE_DNS_SERVER = each.value.WEBSITE_DNS_SERVER # "168.63.129.16",
+        WEBSITE_VNET_ROUTE_ALL = each.value.WEBSITE_VNET_ROUTE_ALL # "1"
+      }         
+  }
 }
 
 resource "azurerm_app_service_virtual_network_swift_connection" "vnetintegrationconnection" {
