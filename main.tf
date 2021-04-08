@@ -40,12 +40,9 @@ resource  "azurerm_app_service" "appservices-aps" {
      }
   }
 
-  dynamic "app_settings" {
-     for_each =  each.value.WEBSITE_DNS_SERVER == null ? [] : [each.value.WEBSITE_DNS_SERVER]
-      content {
+  app_settings {
         WEBSITE_DNS_SERVER = each.value.WEBSITE_DNS_SERVER # "168.63.129.16",
-        WEBSITE_VNET_ROUTE_ALL = each.value.WEBSITE_VNET_ROUTE_ALL # "1"
-      }         
+        WEBSITE_VNET_ROUTE_ALL = each.value.WEBSITE_VNET_ROUTE_ALL # "1"             
   }
 }
 
