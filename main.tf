@@ -40,10 +40,12 @@ resource  "azurerm_app_service" "appservices-aps" {
      }
   }
 
-  app_settings {
-        WEBSITE_DNS_SERVER = each.value.WEBSITE_DNS_SERVER # "168.63.129.16",
-        WEBSITE_VNET_ROUTE_ALL = each.value.WEBSITE_VNET_ROUTE_ALL # "1"             
+  app_settings = {
+    "WEBSITE_DNS_SERVER" = each.value.WEBSITE_DNS_SERVER # "168.63.129.16",
+    "WEBSITE_VNET_ROUTE_ALL" = each.value.WEBSITE_VNET_ROUTE_ALL # "1"             
   }
+
+
 }
 
 resource "azurerm_app_service_virtual_network_swift_connection" "vnetintegrationconnection" {
