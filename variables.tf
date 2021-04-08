@@ -15,7 +15,7 @@ variable "subnet_id" {
   description = "The ID of the subnet that the Apps Service server will be connected to"
 }
 
-variable "ServicePlan" {
+variable "AppServicesPlan" {
   description = "Collection of service Plan and App Services"
   type = any
 }

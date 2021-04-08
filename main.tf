@@ -25,22 +25,22 @@ resource "azurerm_app_service_plan" "appservices-asp" {
   }
 }
 
-resource  "azurerm_app_service" "appservices-aps" {
-  name                = "${var.environment}-cio-${var.AppServices["name"]}"
-  location            = var.location
-  resource_group_name = var.AppServices["resource_group_name"]
-  app_service_plan_id = azurerm_app_service_plan.appservices-asp.id
+# resource  "azurerm_app_service" "appservices-aps" {
+#   name                = "${var.environment}-cio-${var.AppServices["name"]}"
+#   location            = var.location
+#   resource_group_name = var.AppServices["resource_group_name"]
+#   app_service_plan_id = azurerm_app_service_plan.appservices-asp.id
   
-  dynamic "app_settings" {
-     for_each =  each.value.policyretention_days == null ? [] : [ each.value.policyretention_days]
-      content {
-        WEBSITE_DNS_SERVER = var.AppServices["WEBSITE_DNS_SERVER"] # "168.63.129.16",
-        WEBSITE_VNET_ROUTE_ALL = var.AppServices["WEBSITE_VNET_ROUTE_ALL"] # "1"
-      }         
-  }
-}
+#   dynamic "app_settings" {
+#      for_each =  each.value.policyretention_days == null ? [] : [ each.value.policyretention_days]
+#       content {
+#         WEBSITE_DNS_SERVER = var.AppServices["WEBSITE_DNS_SERVER"] # "168.63.129.16",
+#         WEBSITE_VNET_ROUTE_ALL = var.AppServices["WEBSITE_VNET_ROUTE_ALL"] # "1"
+#       }         
+#   }
+# }
 
-resource "azurerm_app_service_virtual_network_swift_connection" "vnetintegrationconnection" {
-  app_service_id  = azurerm_app_service.appservices-aps.id
-  subnet_id       = local.subnets.APP.id
-}
+# resource "azurerm_app_service_virtual_network_swift_connection" "vnetintegrationconnection" {
+#   app_service_id  = azurerm_app_service.appservices-aps.id
+#   subnet_id       = local.subnets.APP.id
+# }
