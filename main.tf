@@ -10,12 +10,12 @@ terraform {
 locals {
     deployappservices = {
     for x in var.AppServicesPlan.AppServices : 
-      "${x.name}" => x if lookup(x, "deploy", true) != false
+      "${x.nameappservice}" => x if lookup(x, "deploy", true) != false
   }
 }
 
 resource "azurerm_app_service_plan" "appservices-asp" {
-  name                ="${var.environment}-cio-${var.AppServicesPlan["name"]}"
+  name                ="${var.environment}-cio-${var.AppServicesPlan["nameplan"]}"
   location            = var.location
   resource_group_name = var.AppServicesPlan["resource_group_name"]
 
@@ -27,7 +27,7 @@ resource "azurerm_app_service_plan" "appservices-asp" {
 
 resource  "azurerm_app_service" "appservices-aps" {
   for_each = local.deployappservices
-  name                = "${var.environment}-cio-${each.value.name}"
+  name                = "${var.environment}-cio-${each.value.nameappservice}"
   location            = var.location
   resource_group_name = each.value.resource_group_name
   app_service_plan_id = azurerm_app_service_plan.appservices-asp.id
