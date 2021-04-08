@@ -32,7 +32,7 @@ resource  "azurerm_app_service" "appservices-aps" {
   resource_group_name = each.value.resource_group_name
   app_service_plan_id = azurerm_app_service_plan.appservices-asp.id
   
-  site_config {
+  dynamic "site_config" {
     for_each =  each.value.dotnet_framework_version == null ? [] : [each.value.dotnet_framework_version]
      content {
       dotnet_framework_version = "v4.0"
