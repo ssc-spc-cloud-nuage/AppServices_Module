@@ -50,6 +50,6 @@ resource  "azurerm_app_service" "appservices-aps" {
 }
 
 resource "azurerm_app_service_virtual_network_swift_connection" "vnetintegrationconnection" {
-  app_service_id  = azurerm_app_service.appservices-aps.id
+  app_service_id  = azurerm_app_service.appservices-aps[each.key].id
   subnet_id       = local.subnets.APP.id
 }
