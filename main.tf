@@ -35,7 +35,7 @@ resource  "azurerm_app_service" "appservices-aps" {
   dynamic "site_config" {
     for_each =  each.value.dotnet_framework_version == null ? [] : [each.value.dotnet_framework_version]
      content {
-      dotnet_framework_version = "v4.0"     
+      dotnet_framework_version =  each.value.dotnet_framework_version    
       use_32_bit_worker_process = true 
      }
   }
