@@ -52,6 +52,6 @@ resource "azurerm_app_service_virtual_network_swift_connection" "vnetintegration
   #for_each = local.deployappservices
     count = local.deployappservices.azurerm_app_service_virtual_network_swift_connection == true ? 1 : 0
     #app_service_id  = azurerm_app_service.appservices-aps[each.key].id
-    app_service_id  = azurerm_app_service.appservices-aps.id
+    app_service_id  = azurerm_app_service.appservices-aps[count.index].id
     subnet_id       = var.subnet_id
 }
