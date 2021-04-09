@@ -49,7 +49,7 @@ resource  "azurerm_app_service" "appservices-aps" {
 }
 
 resource "azurerm_app_service_virtual_network_swift_connection" "vnetintegrationconnection" {
-  for_each = local.deployappservices.azurerm_app_service_virtual_network_swift_connection == false ? local.deployappservices : {}
+  for_each = local.deployappservices.azurerm_app_service_virtual_network_swift_connection == true ? local.deployappservices : {}
     app_service_id  = azurerm_app_service.appservices-aps[each.key].id    
     subnet_id       = var.subnet_id
 }
