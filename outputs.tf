@@ -1,3 +1,3 @@
-# output "id" {
-#   value = azurerm_mssql_server.mssql.id
-# }
+output "AppService" {
+  value = local.deployappservices
+}
