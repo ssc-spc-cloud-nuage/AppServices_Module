@@ -42,6 +42,12 @@ resource  "azurerm_app_service" "appservices-aps" {
      }
   }
 
+    connection_string {
+    name  = "boardroom_directory"
+    type  = "SQLAzure"
+    value = "Server=tcp:scpc-cio-sqlsrvvcboardroom.database.windows.net,1433;Initial Catalog=scpc-cio-sqldb-vcboardroom;Persist Security Info=False;User ID=azureadmin;Password=Canada123!sqlserver;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+  }
+
   app_settings = {
     "WEBSITE_DNS_SERVER" = each.value.WEBSITE_DNS_SERVER # "168.63.129.16",
     "WEBSITE_VNET_ROUTE_ALL" = each.value.WEBSITE_VNET_ROUTE_ALL # "1"             
