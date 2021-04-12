@@ -42,10 +42,13 @@ resource  "azurerm_app_service" "appservices-aps" {
      }
   }
 
-    connection_string {
-    name  = "boardroom_directory"
-    type  = "SQLAzure"
-    value = "Server=tcp:scpc-cio-sqlsrvvcboardroom.database.windows.net,1433;Initial Catalog=scpc-cio-sqldb-vcboardroom;Persist Security Info=False;User ID=azureadmin;Password=Canada123!sqlserver;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+   dynamic "connection_string" {
+      for_each =  each.value.name == null ? [] : [each.value.name]
+      content {
+        name  = each.value.name # "boardroom_directory"
+        type  = each.value.type # "SQLAzure"
+        value = each.value.value #"Server=tcp:scpc-cio-sqlsrvvcboardroom.database.windows.net,1433;Initial Catalog=scpc-cio-sqldb-vcboardroom;Persist Security Info=False;User ID=azureadmin;Password=Canada123!sqlserver;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+     }
   }
 
   app_settings = {
