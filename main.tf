@@ -31,13 +31,14 @@ resource  "azurerm_app_service" "appservices-aps" {
   location            = var.location
   resource_group_name = each.value.resource_group_name
   app_service_plan_id = azurerm_app_service_plan.appservices-asp.id
-  managed_pipeline_mode = "Classic"
+
   
   dynamic "site_config" {
     for_each =  each.value.dotnet_framework_version == null ? [] : [each.value.dotnet_framework_version]
      content {
       dotnet_framework_version =  each.value.dotnet_framework_version    
       use_32_bit_worker_process = true 
+      managed_pipeline_mode = "Classic"
      }
   }
 
