@@ -64,7 +64,7 @@ resource "azurerm_private_endpoint" "privateendpoint" {
     name                = "backwebappprivateendpoint"
     location            = var.location
     resource_group_name = each.value.resource_group_name
-    subnet_id           = var.subnet_id
+    subnet_id           = var.subnet_id_EP
 
     private_dns_zone_group {
       name = "privatednszonegroup"
@@ -83,5 +83,5 @@ resource "azurerm_private_endpoint" "privateendpoint" {
 resource "azurerm_app_service_virtual_network_swift_connection" "vnetintegrationconnection" {
   for_each = local.deployappservices
     app_service_id  = azurerm_app_service.appservices-aps[each.key].id    
-    subnet_id       = var.subnet_id
+    subnet_id       = var.subnet_id_APP
 }

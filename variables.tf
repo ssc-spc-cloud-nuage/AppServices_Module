@@ -11,7 +11,11 @@ variable "deploy" {
   default     = false
 }
 
-variable "subnet_id" {
+variable "subnet_id_APP" {
+  description = "The ID of the subnet that the Apps Service server will be connected to"
+}
+
+variable "subnet_id_EP" {
   description = "The ID of the subnet that the Apps Service server will be connected to"
 }
 
