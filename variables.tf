@@ -19,3 +19,7 @@ variable "AppServicesPlan" {
   description = "Collection of service Plan and App Services"
   type = any
 }
+
+variable "DnsPrivatezoneId" {
+  description = ""
+}
