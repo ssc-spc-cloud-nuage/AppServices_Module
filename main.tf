@@ -60,7 +60,7 @@ resource  "azurerm_app_service" "appservices-aps" {
 }
 
 resource "azurerm_private_endpoint" "privateendpoint" {
-  for_each = local.deployappservices
+  for_each = var.subnet_id_EP == null ? [] : [local.deployappservices]
     name                = "backwebappprivateendpoint"
     location            = var.location
     resource_group_name = each.value.resource_group_name
