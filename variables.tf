@@ -22,4 +22,5 @@ variable "AppServicesPlan" {
 
 variable "DnsPrivatezoneId" {
   description = ""
+  type = list(string)
 }
