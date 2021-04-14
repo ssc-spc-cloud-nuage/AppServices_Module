@@ -57,25 +57,25 @@ resource  "azurerm_app_service" "appservices-aps" {
   }
 }
 
-# resource "azurerm_private_endpoint" "privateendpoint" {
-#   for_each =  local.deployappservices
-#     name                = "backwebappprivateendpoint"
-#     location            = var.location
-#     resource_group_name = each.value.resource_group_name
-#     subnet_id           = var.subnet_id_EP
+resource "azurerm_private_endpoint" "privateendpoint" {
+  for_each =  local.deployappservices
+    name                = "backwebappprivateendpoint"
+    location            = var.location
+    resource_group_name = each.value.resource_group_name
+    subnet_id           = var.subnet_id_EP
 
-#     private_dns_zone_group {
-#       name = "privatednszonegroup"
-#       private_dns_zone_ids = [var.DnsPrivatezoneId]
-#     }
+    private_dns_zone_group {
+      name = "privatednszonegroup"
+      private_dns_zone_ids = [var.DnsPrivatezoneId]
+    }
 
-#     private_service_connection {
-#       name = "privateendpointconnection"
-#       private_connection_resource_id = azurerm_app_service.appservices-aps[each.key].id 
-#       subresource_names = ["sites"]
-#       is_manual_connection = false
-#     }
-# }
+    private_service_connection {
+      name = "privateendpointconnection"
+      private_connection_resource_id = azurerm_app_service.appservices-aps[each.key].id 
+      subresource_names = ["sites"]
+      is_manual_connection = false
+    }
+}
 
 
 resource "azurerm_app_service_virtual_network_swift_connection" "vnetintegrationconnection" {
