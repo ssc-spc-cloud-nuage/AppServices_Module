@@ -55,8 +55,6 @@ resource  "azurerm_app_service" "appservices-aps" {
     "WEBSITE_DNS_SERVER" = each.value.WEBSITE_DNS_SERVER # "168.63.129.16",
     "WEBSITE_VNET_ROUTE_ALL" = each.value.WEBSITE_VNET_ROUTE_ALL # "1"             
   }
-
-
 }
 
 resource "azurerm_private_endpoint" "privateendpoint" {
