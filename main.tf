@@ -31,7 +31,7 @@ resource  "azurerm_app_service" "appservices-aps" {
   location            = var.location
   resource_group_name = each.value.resource_group_name
   app_service_plan_id = azurerm_app_service_plan.appservices-asp.id
-
+  https_only          = true 
   
   dynamic "site_config" {
     for_each =  each.value.dotnet_framework_version == null ? [] : [each.value.dotnet_framework_version]
@@ -39,6 +39,7 @@ resource  "azurerm_app_service" "appservices-aps" {
       dotnet_framework_version =  each.value.dotnet_framework_version    
       use_32_bit_worker_process = true 
       managed_pipeline_mode = "Classic"
+      health_check_path     = ".well-known/pki-validation/godaddy.html"
      }
   }
 
@@ -53,7 +54,8 @@ resource  "azurerm_app_service" "appservices-aps" {
 
   app_settings = {
     "WEBSITE_DNS_SERVER" = each.value.WEBSITE_DNS_SERVER # "168.63.129.16",
-    "WEBSITE_VNET_ROUTE_ALL" = each.value.WEBSITE_VNET_ROUTE_ALL # "1"             
+    "WEBSITE_VNET_ROUTE_ALL" = each.value.WEBSITE_VNET_ROUTE_ALL # "1"
+    "WEBSITE_HEALTHCHECK_MAXPINGFAILURES" = "10"
   }
 }
 
